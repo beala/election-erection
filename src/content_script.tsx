@@ -1,9 +1,29 @@
-chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-  if (msg.color) {
-    console.log("Receive color = " + msg.color);
-    document.body.style.backgroundColor = msg.color;
-    sendResponse("Change color to " + msg.color);
+function replaceTextContent(node: Node): void {
+  if (node.nodeType === Node.TEXT_NODE) {
+    const text = node as Text;
+    const content = text.textContent || '';
+    if (content.match(/\b[Ee]lection\b/)) {
+      console.log('content', content);
+      text.textContent = content.replace(/\b[Ee]lection\b/g, match => 
+        match.charAt(0) === 'E' ? 'Erection' : 'erection'
+      );
+    }
   } else {
-    sendResponse("Color message is none.");
+    node.childNodes.forEach(replaceTextContent);
   }
+}
+
+function handleMutations(mutations: MutationRecord[]): void {
+  mutations.forEach(mutation => {
+    mutation.addedNodes.forEach(node => replaceTextContent(node));
+  });
+}
+
+replaceTextContent(document.body);
+
+const observer = new MutationObserver(handleMutations);
+
+observer.observe(document.body, {
+  childList: true,
+  subtree: true
 });
