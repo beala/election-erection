@@ -3,7 +3,6 @@ function replaceTextContent(node: Node): void {
     const text = node as Text;
     const content = text.textContent || '';
     if (content.match(/\b[Ee]lection\b/)) {
-      console.log('content', content);
       text.textContent = content.replace(/\b[Ee]lection\b/g, match => 
         match.charAt(0) === 'E' ? 'Erection' : 'erection'
       );
